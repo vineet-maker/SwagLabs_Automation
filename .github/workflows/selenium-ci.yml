@@ -1,4 +1,4 @@
-name: Selenium Automation Tests
+name: Selenium Automation Tests with Allure
 
 on:
   push:
@@ -6,10 +6,6 @@ on:
 
   pull_request:
     branches: [ main ]
-
-  schedule:
-    # Daily run at 6:30 AM IST (01:00 UTC)
-    - cron: "0 1 * * *"
 
 jobs:
   test:
@@ -34,8 +30,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-      - name: Run Selenium tests (Headless)
+      - name: Run Selenium tests
         env:
           CI: true
         run: |
-          pytest -v
+          pytest
+
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
