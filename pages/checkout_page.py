@@ -1,33 +1,38 @@
 from selenium.webdriver.common.by import By
-from utilities.base_class import BaseClass
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-class CheckoutPage(BaseClass):
 
-    CHECKOUT_CONTAINER = (By.ID, "checkout_info_container")
+class CheckoutPage:
 
-    FIRST_NAME = (By.ID, "first-name")
-    LAST_NAME = (By.ID, "last-name")
-    ZIP_CODE = (By.ID, "postal-code")
+    def __init__(self, driver):
+        self.driver = driver
+        self.wait = WebDriverWait(driver, 15)
 
-    CONTINUE_BTN = (By.ID, "continue")
-    FINISH_BTN = (By.ID, "finish")
-    SUCCESS_MSG = (By.CLASS_NAME, "complete-header")
+        self.FIRST_NAME = (By.ID, "first-name")
+        self.LAST_NAME = (By.ID, "last-name")
+        self.ZIP_CODE = (By.ID, "postal-code")
+        self.CONTINUE_BTN = (By.ID, "continue")
+        self.FINISH_BTN = (By.ID, "finish")
+        self.SUCCESS_MSG = (By.CLASS_NAME, "complete-header")
 
     def wait_for_checkout_page(self):
-        self.wait.until(EC.presence_of_element_located(self.CHECKOUT_CONTAINER))
+        # ✅ wait for first input field instead of container
+        self.wait.until(
+            EC.visibility_of_element_located(self.FIRST_NAME)
+        )
 
-    def enter_checkout_details(self, fname, lname, zip_code):
+    def enter_checkout_details(self, first, last, zip_code):
         self.wait_for_checkout_page()
-
-        self.wait.until(EC.element_to_be_clickable(self.FIRST_NAME)).send_keys(fname)
-        self.driver.find_element(*self.LAST_NAME).send_keys(lname)
+        self.driver.find_element(*self.FIRST_NAME).send_keys(first)
+        self.driver.find_element(*self.LAST_NAME).send_keys(last)
         self.driver.find_element(*self.ZIP_CODE).send_keys(zip_code)
-
         self.driver.find_element(*self.CONTINUE_BTN).click()
 
-    def finish_order(self):
-        self.wait.until(EC.element_to_be_clickable(self.FINISH_BTN)).click()
+    def finish_checkout(self):
+        self.wait.until(
+            EC.element_to_be_clickable(self.FINISH_BTN)
+        ).click()
 
     def get_success_message(self):
         return self.wait.until(
