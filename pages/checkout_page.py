@@ -39,7 +39,7 @@ class CheckoutPage:
 
         self.driver.find_element(*self.CONTINUE_BTN).click()
 
-    def finish_checkout(self):
+    def finish_order(self):
         self.wait.until(EC.url_contains("checkout-step-two"))
         self.wait.until(
             EC.element_to_be_clickable(self.FINISH_BTN)

@@ -26,9 +26,12 @@ class ProductsPage:
 
     def get_cart_count(self):
         self.wait.until(
-            EC.text_to_be_present_in_element(self.CART_BADGE, "1")
+            EC.presence_of_element_located(self.CART_BADGE)
         )
-        return self.driver.find_element(*self.CART_BADGE).text
+        badge = self.driver.find_element(*self.CART_BADGE)
+
+        self.wait.until(lambda d: badge.text != "")
+        return badge.text
 
     def go_to_cart(self):
         self.wait.until(
